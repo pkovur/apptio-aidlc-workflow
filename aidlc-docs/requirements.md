@@ -2,7 +2,7 @@
 
 ## Document Metadata
 - **Feature:** PM Agent (Andromeda)
-- **Version:** 1.0
+- **Version:** 1.1
 - **Date:** 2026-07-03
 - **Author:** pkovur (with AI-DLC Inception)
 - **Source PRD:** PRD-Andromeda-PRD-Authoring.docx
@@ -12,7 +12,7 @@
 
 ## 1. Overview
 
-Andromeda is a Kiro agent integrated into the AI-DLC workflow that provides a guided PRD authoring workspace for Product Managers. The agent interviews the PM, infers aggressively, drafts a PRD conforming to a versioned standard, checks readiness, and — on explicit PM confirmation — creates a Jira epic with the PRD as its description. This feeds directly into AI-DLC inception.
+Andromeda (working name — internal only) is a Kiro agent integrated into the AI-DLC workflow that provides a guided PRD authoring workspace for Product Managers. The agent interviews the PM, infers aggressively, drafts a PRD conforming to a versioned standard, checks readiness, and — on explicit PM confirmation — creates a Jira epic with the PRD as its description. This feeds directly into AI-DLC inception.
 
 The agent runs on Claude underneath Kiro. It uses the PM's existing IBM/Apptio SSO identity and their Jira MCP token for epic creation.
 
@@ -34,7 +34,7 @@ Before any PRD authoring begins, the PM Agent must conduct a structured context 
 - Related Jira epics / tickets from prior work
 - Existing architecture diagrams or design docs
 
-**REQ-CD-03:** For brownfield projects, the agent MUST build a "Knowledge Graph" from the provided repo(s) — analyzing code structure, existing architecture, API contracts, data models, and component relationships — before proceeding to PRD authoring.
+**REQ-CD-03:** For brownfield projects, the agent MUST build a "Knowledge Graph" from the provided repo(s) — performing a full analysis of code structure, existing architecture, API contracts, data models, and component relationships — before proceeding to PRD authoring. The Knowledge Graph MUST be persisted back to Git as a structured artifact.
 
 **REQ-CD-04:** Even for greenfield projects, the agent MUST ask about:
 - The broader product ecosystem this feature lives within
@@ -44,7 +44,7 @@ Before any PRD authoring begins, the PM Agent must conduct a structured context 
 - Technology stack preferences or constraints
 - Team composition and expertise
 
-**REQ-CD-05:** The agent MUST persist all gathered context as a structured knowledge artifact (markdown file) in Git so it can be referenced during authoring and by downstream inception.
+**REQ-CD-05:** The agent MUST persist all gathered context as a structured knowledge artifact (markdown file) in Git so it can be referenced during authoring and by downstream inception. The Knowledge Graph is persisted on the PM's feature branch in the AIDLC workflow repo.
 
 ### 2.2 Project Setup Questions
 
@@ -92,7 +92,7 @@ Before any PRD authoring begins, the PM Agent must conduct a structured context 
 
 **REQ-GA-12:** The authoring conversation MUST cap at 15 turns. After that, the agent summarizes progress and prompts for attach/save/continue-later.
 
-**REQ-GA-13:** The agent MUST allow the PM to save a draft and come back to it (drafts persisted as .md files in Git).
+**REQ-GA-13:** The agent MUST allow the PM to save a draft and come back to it (drafts persisted as .md files on the PM's feature branch in the AIDLC workflow repo).
 
 ---
 
@@ -142,7 +142,7 @@ Before any PRD authoring begins, the PM Agent must conduct a structured context 
 
 **REQ-RC-04:** The agent MUST specifically flag if the Out-of-Scope section is empty or weak — this is where most downstream rework is prevented.
 
-**REQ-RC-05:** A minimum readiness threshold MUST be met before attach is offered (configurable, default: 7/10).
+**REQ-RC-05:** A minimum readiness score of **7/10** MUST be met before attach is offered.
 
 ---
 
@@ -207,13 +207,13 @@ participating_repos: []
 
 ## 10. Persistence and Artifacts
 
-**REQ-PA-01:** In-progress drafts MUST be persisted as .md files in Git (on a branch in the AIDLC workflow repo).
+**REQ-PA-01:** In-progress drafts MUST be persisted as .md files in Git on the PM's feature branch in the AIDLC workflow repo.
 
 **REQ-PA-02:** The finished PRD MUST be saved as a .md file in Git regardless of whether Jira attach succeeds.
 
 **REQ-PA-03:** If Jira is unavailable, the PM MUST be able to export/copy the finished PRD as a markdown document.
 
-**REQ-PA-04:** The context discovery artifact (knowledge graph summary) MUST be persisted alongside the PRD.
+**REQ-PA-04:** The context discovery artifact (Knowledge Graph) MUST be persisted in Git on the PM's feature branch alongside the PRD. Full repo analysis is performed and stored.
 
 ---
 
@@ -279,18 +279,18 @@ participating_repos: []
 
 | ID | Requirement | Summary |
 |----|-------------|---------|
-| REQ-CD-01 to CD-07 | Context Discovery | Greenfield/brownfield detection, knowledge building, Jira project selection |
+| REQ-CD-01 to CD-07 | Context Discovery | Greenfield/brownfield detection, full knowledge building, Knowledge Graph persisted to Git, Jira project selection |
 | REQ-GA-01 | Single-source input | Accept one-line idea, ticket, doc, or file |
 | REQ-GA-03 to GA-06 | Reframing & challenge | Restate job, challenge framing, sizing judgment, clustered interview |
 | REQ-GA-07 to GA-10 | Interview style & guardrails | Lettered Q&A, aggressive inference, intent-level enforcement |
 | REQ-GA-12 to GA-13 | Session constraints | 15-turn cap, save/resume drafts |
 | REQ-PT-01 to PT-06 | Versioned PRD template | Build and reference template, all core sections including NFRs and failure modes |
-| REQ-RC-01 to RC-05 | Readiness check | Numeric scoring, per-section breakdown, minimum threshold |
+| REQ-RC-01 to RC-05 | Readiness check | Numeric scoring (min 7/10), per-section breakdown |
 | REQ-CE-01 to CE-03 | Coaching | Explain why, teach the bar, support new PMs |
 | REQ-RE-01 to RE-02 | Review & edit | Full draft review before attach |
 | REQ-BR-01 to BR-02 | Bridge metadata | YAML front matter for inception handoff |
 | REQ-JI-01 to JI-06 | Jira integration | Epic creation, PM token, all projects, confirmation gate, fallback |
-| REQ-PA-01 to PA-04 | Persistence | Git-based .md artifacts, knowledge graph |
+| REQ-PA-01 to PA-04 | Persistence | Git-based .md artifacts on PM's feature branch, Knowledge Graph persisted |
 | REQ-AT-01 to AT-03 | Audit trail | Decision log, saved alongside PRD |
 | REQ-AB-01 to AB-05 | Behavior constraints | No fabrication, no technical design, graceful decline |
 | REQ-PL-01 to PL-05 | Platform | Kiro agent, Claude, SSO, Jira MCP, AI-DLC entry point |
@@ -305,17 +305,20 @@ participating_repos: []
 | REQ-PT-07 | Template gap detection | Identify PRDs written against older template versions |
 | REQ-CE-04 | Example surfacing | Show anonymized examples of well-written sections |
 | REQ-RE-03 | PRD diff/comparison | Show changes between draft versions |
+| REQ-MVP2-01 | Post-inception edit path | Support change requests after PRD has entered inception (round-trip editing) |
 
 ---
 
-## 16. Open Questions (Carried from PRD)
+## 16. Resolved Questions
 
-1. Does v1 adopt the "Andromeda" name publicly or is it an internal working name?
-2. How does the originating engineer (Sauravmoy Sarkar) stay involved as this moves to formal build?
-3. Where exactly do in-progress drafts live in Git — on the PM's feature branch in the AIDLC workflow repo, or a dedicated `prd-drafts/` branch?
-4. Does v1 need any edit path after a PRD has entered inception, or is the one-way handoff acceptable?
-5. How does the Knowledge Graph for brownfield projects handle large repos — full analysis or targeted to specific paths?
-6. What is the minimum viable readiness score for attach (proposed: 7/10)?
+| # | Question | Answer | Decided By | Date |
+|---|----------|--------|------------|------|
+| 1 | Does v1 adopt the "Andromeda" name publicly or is it an internal working name? | Working name only (internal) | PM (pkovur) | 2026-07-03 |
+| 2 | How does the originating engineer (Sauravmoy Sarkar) stay involved? | No specific involvement requirement for the build phase | PM (pkovur) | 2026-07-03 |
+| 3 | Where do in-progress drafts live in Git? | On the PM's feature branch in the AIDLC workflow repo | PM (pkovur) | 2026-07-03 |
+| 4 | Does v1 need an edit path after PRD enters inception? | MVP1: one-way handoff. MVP2: extend for change requests | PM (pkovur) | 2026-07-03 |
+| 5 | Knowledge Graph depth for large brownfield repos? | Full analysis. Knowledge Graph persisted back to Git | PM (pkovur) | 2026-07-03 |
+| 6 | Minimum viable readiness score for attach? | 7/10 | PM (pkovur) | 2026-07-03 |
 
 ---
 
