@@ -40,8 +40,8 @@
 ### DEC-005: Draft Persistence
 - **Date:** 2026-07-03
 - **Question:** Where do in-progress PRD drafts live?
-- **Decision:** Persist in Git as .md artifacts
-- **Rationale:** Aligns with AI-DLC's artifact-in-Git philosophy. Version controlled and accessible.
+- **Decision:** Persist in Git as .md artifacts on the PM's feature branch in the AIDLC workflow repo.
+- **Rationale:** Aligns with AI-DLC's artifact-in-Git philosophy. Version controlled and accessible. Each PM's work lives on their own branch.
 - **Decided by:** PM (pkovur)
 
 ### DEC-006: Jira Project Scope
@@ -108,6 +108,41 @@
 - **Rationale:** No need to reinvent. Curate the best from existing proven patterns and make it the Apptio standard.
 - **Decided by:** PM (pkovur)
 
+### DEC-014: Public Name
+- **Date:** 2026-07-03
+- **Question:** Does v1 adopt the "Andromeda" name publicly or is it an internal working name?
+- **Decision:** Working name only — internal use. Not a public-facing brand for v1.
+- **Rationale:** Keep naming simple during build phase. Public branding can be decided later.
+- **Decided by:** PM (pkovur)
+
+### DEC-015: Originating Engineer Involvement
+- **Date:** 2026-07-03
+- **Question:** How does Sauravmoy Sarkar stay involved as this moves to formal build?
+- **Decision:** No specific involvement requirement for the build phase.
+- **Rationale:** The PRD formalizes and carries forward the ideation. No ongoing gating or approval role required from the originator during construction.
+- **Decided by:** PM (pkovur)
+
+### DEC-016: Knowledge Graph — Depth and Persistence
+- **Date:** 2026-07-03
+- **Question:** How does the Knowledge Graph handle large brownfield repos? Full analysis or targeted?
+- **Decision:** Full analysis. The Knowledge Graph is persisted back to Git on the PM's feature branch.
+- **Rationale:** Full analysis gives the richest context for PRD authoring and downstream inception. Persisting to Git ensures it's available for the team and survives session boundaries.
+- **Decided by:** PM (pkovur)
+
+### DEC-017: Minimum Readiness Score
+- **Date:** 2026-07-03
+- **Question:** What is the minimum readiness score required before attach?
+- **Decision:** 7/10
+- **Rationale:** Balances quality gate with pragmatism. 7/10 means all critical sections are covered, even if some could be richer. Below 7, the PRD is too thin for inception to start cleanly.
+- **Decided by:** PM (pkovur)
+
+### DEC-018: Post-Inception Edit Path
+- **Date:** 2026-07-03
+- **Question:** Does v1 need an edit path after a PRD has entered inception?
+- **Decision:** MVP1: one-way handoff (no edit path). MVP2: extend to support change requests after inception has started.
+- **Rationale:** One-way handoff is simpler and acceptable for v1. Real-world usage will reveal how often PMs need to update a PRD mid-inception, informing the MVP2 design.
+- **Decided by:** PM (pkovur)
+
 ---
 
 ## Process Decisions
@@ -127,16 +162,10 @@
 - **Step 4:** PRD ingested and analyzed ✅
 - **Step 5:** Requirements analysis — clarifying questions asked and answered ✅
 - **Step 5 (continued):** Market research conducted, additional requirements identified and approved ✅
+- **Step 5 (continued):** All open questions resolved ✅
 
 ---
 
-## Pending Decisions
+## All Questions Resolved
 
-| ID | Question | Status | Owner |
-|----|----------|--------|-------|
-| PEND-01 | Public name: "Andromeda" or internal-only? | Open | PM team |
-| PEND-02 | Sauravmoy Sarkar's involvement in build phase | Open | PM team |
-| PEND-03 | Exact Git location for draft persistence | Open | Engineering |
-| PEND-04 | Post-inception edit path (one-way handoff vs. round-trip) | Deferred to v2 | PM team |
-| PEND-05 | Knowledge Graph depth for large brownfield repos | Open | Engineering |
-| PEND-06 | Minimum readiness score (proposed: 7/10) | Proposed | PM team |
+No pending decisions remain. Requirements document is ready for team approval.
